@@ -1,93 +1,104 @@
-const divbtniniciar = document.getElementById("iniciarjogo")
-const divcaixaquiz = document.getElementById("caixaquiz")
-const h2perguntadoquiz = document.getElementById("perguntadoquiz")
+const divbtniniciar = document.getElementById("iniciarjogo");
+const divcaixaquiz = document.getElementById("caixaquiz");
+const h2perguntadoquiz = document.getElementById("perguntadoquiz");
+const btniniciar = document.getElementById("botaojogar");
+const btnproxima = document.getElementById("btnproximo");
+const placar = document.getElementById("placar");
+const opcoesRespostas = document.getElementById("opcoesRespostas");
 
+btniniciar.addEventListener("click", btnIniciarJogo);
+btnproxima.addEventListener("click", proximapergunta);
 
-let indicepergutas = 0
+let indicepergutas = 0;
+let respostaCorretas = 0;
 
 //---------------------------------------------------------------arrays-----------------------------------------------------------
-const perguntas = [{
+const perguntas = [
+    {
         perguntas: "Qual é o maior deserto do mundo?",
-        opcoes: ["Saara", "Antartica", "Itacoatiara",],respostacorreta:"Antartica"
+        opcoes: ["Saara", "Antartida", "Itacoatiara"],
+        respostacorreta: "Antartida"
     },
-
     {
         perguntas: "Qual é a capital do Brasil?",
-        opcoes: ["Rio de janeiro", "São paulo", "Brasilia"],respostacorreta:"Brasilia"
+        opcoes: ["Rio de janeiro", "São paulo", "Brasilia"],
+        respostacorreta: "Brasilia"
     },
-
     {
         perguntas: "Qual é a capital da Austrália?",
-        opcoes: ["camberra", "Sidney", "Rio grande do sul"],respostacorreta:"camberra"
+        opcoes: ["Camberra", "Sidney", "Rio grande do sul"],
+        respostacorreta: "Camberra"
     },
-
     {
         perguntas: "Qual é o país com maior população no mundo?",
-        opcoes: ["India", "China", "Japão"],respostacorreta:"India"
+        opcoes: ["India", "China", "Japão"],
+        respostacorreta: "India"
     },
-
     {
         perguntas: " Qual a linha imaginária que atravessa o Brasil?",
-        opcoes: ["Equador", "Tropico de capricornio", "Tropico de cancêr"],respostacorreta:"Equador"
+        opcoes: ["Equador", "Tropico de capricornio", "Tropico de cancêr"],
+        respostacorreta: "Equador"
     },
-
     {
         perguntas: "Qual o oceano que banha o Brasil?",
-        opcoes: ["Atlantico", "Pacfico", "Indico"],respostacorreta:"Atlantico"
+        opcoes: ["Atlantico", "Pacfico", "Indico"],
+        respostacorreta: "Atlantico"
     },
-]
+];
 //---------------------------------------------------------------arrays-----------------------------------------------------------
 
 function btnIniciarJogo() {
-    fecharbotaoinicio()
-    abrirtelajogo()
+    fecharbotaoinicio();
+    abrirtelajogo();
 }
 
 function fecharbotaoinicio() {
-    divbtniniciar.remove()
+    divbtniniciar.remove();
 }
 
-
 function abrirtelajogo() {
-    divcaixaquiz.classList.add("active")
+    divcaixaquiz.classList.add("active");
     h2perguntadoquiz.textContent = perguntas[indicepergutas].perguntas;
-    opcoesRespostas.innerHTML = ""
+    opcoesRespostas.innerHTML = "";
+
     perguntas[indicepergutas].opcoes.forEach(opcao => {
-
-        //adicionando perguntas
-        const btnpergunta = document.createElement("button")
-        btnpergunta.textContent = opcao
-
-        //adicionar classe css no botao
-        btnpergunta.classList.add("answer-btn")
-        btnpergunta.addEventListener("click", () => validarrepostacorreta(opcao))
-        opcoesRespostas.appendChild(btnpergunta)
-    })
+        const btnpergunta = document.createElement("button");
+        btnpergunta.textContent = opcao;
+        btnpergunta.classList.add("answer-btn");
+        btnpergunta.addEventListener("click", () => validarrepostacorreta(opcao));
+        opcoesRespostas.appendChild(btnpergunta);
+    });
 }
 
 function validarrepostacorreta(opcoselecionada) {
-    const btnresposta = opcoesRespostas.querySelector("answer-btn")
+    const btnresposta = opcoesRespostas.querySelectorAll(".answer-btn");
+    btnresposta.forEach(botao => {
+        if (botao.textContent === perguntas[indicepergutas].respostacorreta) {
+            botao.classList.add("correct");
+        }
+        if (botao.textContent === opcoselecionada && opcoselecionada !== perguntas[indicepergutas].respostacorreta) {
+            botao.classList.add("incorrect");
+        }
+        botao.disabled = true;
+    });
 
-    if(perguntas[indicepergutas].respostacorreta == opcoselecionada){
-        btnresposta.forEach (opcao => {
-            if(botao.textContent == opcoselecionada){
-                btnpergunta.classList.add("answer-btn.correct")
-            }
-        })
+    if (opcoselecionada === perguntas[indicepergutas].respostacorreta) {
+        respostaCorretas++;
     }
 }
 
+function resultado() {
+    const resultadoplacar = document.getElementById("resultadoplacar");
+    resultadoplacar.textContent = `Acertou ${respostaCorretas} de ${perguntas.length} perguntas!`;
+}
 
 function proximapergunta() {
-    indicepergutas++
+    indicepergutas++;
     if (indicepergutas < perguntas.length) {
-        abrirtelajogo()
-
+        abrirtelajogo();
     } else {
-        alert("sem mais perguntas...")
+        divcaixaquiz.classList.remove("active");
+        placar.classList.add("active");
+        resultado();
     }
-}
-
-function reiniciarpagina(){
-    window.location.reload(forcedReload);
 }
